@@ -15,12 +15,10 @@ return new class extends Migration
     {
         Schema::create('materias', function (Blueprint $table) {
             $table->id('id_materia');
-            $table->string('codigo');
+            $table->string('codigo')->unique();
             $table->string('materia');
             $table->integer('grado');
-            $table->integer('calificacion_minima')->default(0);;
-            $table->unsignedBigInteger('id_carrera');
-            $table->foreign('id_carrera')->references('id_carrera')->on('carreras');
+            $table->integer('calificacion_minima')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

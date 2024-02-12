@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('alumnos', function (Blueprint $table) {
             $table->id('id_alumno');
-            $table->string('matricula');
+            $table->string('matricula')->unique();
             $table->integer('grado');
             $table->unsignedBigInteger('id_carrera');
             $table->foreign('id_carrera')->references('id_carrera')->on('carreras');
