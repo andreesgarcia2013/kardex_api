@@ -24,6 +24,8 @@ class Usuario extends Model
         'id_rol',
     ];
 
+    protected $hidden = ['password'];
+
     public function rol()
     {
         return $this->belongsTo(Rol::class);
