@@ -2,9 +2,10 @@
 
 namespace App\Http\Responses;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse as IlluminateJsonResponse;
 
-class JsonResponse
+class JsonResponse extends Controller
 {
     public static function success($message, $data = null)
     {
@@ -30,17 +31,15 @@ class JsonResponse
         return response()->json($response, $statusCode);
     }
 
-    public static function error($message, $output=null, $statusCode = 500)
-    {
-        $response = [
+    public static function error($message, \Throwable $e, $statusCode = 500)
+    {   
+        $response =  [
             'status' => 'error',
             'message' => $message,
+            'getFile'   =>$e->getFile(),
+            'getLine'   =>$e->getLine(),            
+            'getMessage'=>$e->getMessage(),
         ];
-
-        if ($output !== null) {
-            $response['output'] = $output;
-        }
-
         return response()->json($response, $statusCode);
     }
 }

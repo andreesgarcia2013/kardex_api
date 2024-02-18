@@ -11,8 +11,8 @@ class Materia extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $primaryKey = 'id_usuario';
-    protected $table = 'usuarios';
+    protected $primaryKey = 'id_materia';
+    protected $table = 'materias';
 
     protected $fillable = [
         'codigo',

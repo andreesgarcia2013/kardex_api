@@ -23,7 +23,7 @@ class UserController extends Controller
      */
 
 
-    public function storeAdmin(Request $request)
+    public function store(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -37,30 +37,16 @@ class UserController extends Controller
             $user -> apellido =  $request->apellido;
             $user -> email    =  $request->email;
             $user -> id_rol   =  $request->id_rol;
-
-            $password = Str::random(8); 
-            $user -> password =  Hash::make($password);
+            $user -> password =  Hash::make($request->password);
 
             $user -> save();
-
-            //Enviar las credenciales por correo
-            $credentials = new Request();
-            $credentials -> input( $user->email );
-            $credentials -> input( $password );
-
-            $emailResponse=$this->sendCredentials($credentials);
-            
-            if ($emailResponse -> getStatusCode() != 200) {
-                DB::rollBack();
-                throw new \Exception($emailResponse['output']);
-            }
-
+            //Enviar las credenciales por correo (Se requiere servicio de mails)
             DB::commit();
             return JsonResponse::success('Proceso exitoso', $user);
         
         } catch (\Throwable $th) {
             DB::rollBack();
-            return JsonResponse::error('Error al registrar el usuario', $th->getMessage());
+            return JsonResponse::error('Error al registrar el usuario', $th);
         }
     }
 
@@ -68,37 +54,47 @@ class UserController extends Controller
         try {
             Mail::send(
                 'emails.credenciales',
-                ['user' => $user->email, 'password' => $user->password],
-                function ($message) use ($user){
-                    $message->to($user->email)->subject('Credenciales de Usuario');
+                ['email' => $user->email, 'password' => $user->password],
+                function ($message) use ($user) {
+                    $message->to($user->email);
+                    $message->subject('Hola, es una prueba');
                 }
             );
+            
 
             return JsonResponse::success('Proceso exitoso');
 
         } catch (\Throwable $th) {
-            return JsonResponse::error('Error al enviar el usuario', $th->getMessage());
+            return JsonResponse::error('Error al enviar correo', $th);
         }
     }
 
     public function restorePassword(Request $request){
         try{
             DB::beginTransaction();
-            $user=Usuario::find($request->id_user);
 
+            $rules = UserValidator::restorePasswordRules();
+            $request->validate($rules);
+
+            $user=Usuario::where('email',$request->email)->first();
             if (!$user) {
                 DB::rollBack();
                 return JsonResponse::notFound('No se encontró el usuario');
             }
+            
+            if (!Hash::check($request->old_password, $user->password)) {
+                return JsonResponse::notFound('Las credenciales no coinciden');
+            }
 
-            $user->password = Hash::make($request->password);
+            $user->password = Hash::make($request->new_password);
             $user->save();
 
             
             DB::commit();
+            return JsonResponse::success('Proceso exitoso');
         } catch (\Throwable $th) {
             DB::rollBack();
-            return JsonResponse::error('Error al restaurar las credenciales', $th->getMessage());
+            return JsonResponse::error('Error al restaurar las credenciales', $th);
         }
     }
 
@@ -114,8 +110,13 @@ class UserController extends Controller
     {
         try {
             DB::beginTransaction();
-            $rules = UserValidator::rules();
+
+            $rules = UserValidator::updateRules();
             $request->validate($rules);
+
+            if ($request->has('password')) {
+                throw new \Exception('No puedes cambiar las credenciales desde aquí');
+            }
 
             $user=Usuario::find($id_user);
 
@@ -123,14 +124,35 @@ class UserController extends Controller
                 DB::rollBack();
                 return JsonResponse::notFound('No se encontró el usuario');
             }
-            $user->update($request->all);
+            $user->update($request->all());
 
             DB::commit();
             return JsonResponse::success('Proceso exitoso', $user);
 
         } catch (\Throwable $th) {
             DB::rollBack();
-            return JsonResponse::error('Error al actualizar el usuario', $th->getMessage());
+            return JsonResponse::error('Error al actualizar el usuario', $th);
+        }
+    }
+
+    public function index(){
+        try {
+            $admins=Usuario::where('id_rol', 1)->get();
+            return JsonResponse::success('Proceso exitoso', $admins);
+        } catch (\Throwable $th) {
+            return JsonResponse::error('Error al recuperar los usuario', $th);
+        }
+    }
+
+    public function show($id_user){
+        try {
+            $admin=Usuario::where('id_rol', 1)->where('id_usuario', $id_user)->first();
+            if (!$admin) {
+                return JsonResponse::notFound('No se encontró el usuario');
+            }
+            return JsonResponse::success('Proceso exitoso', $admin);
+        } catch (\Throwable $th) {
+            return JsonResponse::error('Error al recuperar el usuario', $th);
         }
     }
 }
