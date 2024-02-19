@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\KardexController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -47,6 +48,13 @@ Route::prefix('v1/university')-> group(function() {
         Route::patch('/update/{id_materia}', 'update');
     });
 
+    Route::prefix('kardex') -> controller(KardexController::class) -> group(function() {
+        Route::post('/register', 'store');
+        Route::put('/calificar/{id_alumno}', 'update');
+        Route::get('/kardex/{id_alumno}', 'show');
+    }); 
+
     Route::put('/restore', [UserController::class, 'restorePassword'])->name('restorePassword');
+    Route::get('/kardex-pdf/{id_alumno}', [KardexController::class, 'pdfKardex'])->name('pdf-kardex');
 
 });

@@ -21,11 +21,11 @@ class Kardex extends Model
 
     public function alumno()
     {
-        return $this->belongsTo(Alumno::class);
+        return $this->belongsTo(Alumno::class, 'id__alumno', 'id_alumno');
     }
 
     public function materia()
     {
-        return $this->belongsTo(Materia::class);
+        return $this->belongsTo(Materia::class, 'id_materia', 'id_materia');
     }
 }
