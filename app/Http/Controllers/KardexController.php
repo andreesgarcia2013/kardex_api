@@ -53,16 +53,18 @@ class KardexController extends Controller
             foreach($materias as $materia){
                 $kardex = Kardex::where('id_alumno', $request->id_alumno)->where('id_materia',$materia['id_materia'])->first();
                 if (!$kardex) {
-                    $carga = [
+                    $carga[] = [
                         'id_alumno' => $request->id_alumno,
                         'id_materia' => $materia['id_materia'],
                         'calificacion' => $materia['calificacion'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
                 }
             }
             DB::table('kardex')->insert($carga);
             DB::commit();
-            return JsonResponse::success('Materias cargadas con éxito', $kardex);
+            return JsonResponse::success('Materias cargadas con éxito', $carga);
         } catch (\Throwable $th) {
             DB::rollBack();
             return JsonResponse::error('Error al cargar materias', $th);
