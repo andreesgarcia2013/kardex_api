@@ -160,7 +160,7 @@ class KardexController extends Controller
             }
 
         } catch (\Throwable $th) {
-            return JsonResponse::error('Error al asignar el calificacion', $th);
+            return JsonResponse::error('Error al asignar el calificación', $th);
         }
     }
 

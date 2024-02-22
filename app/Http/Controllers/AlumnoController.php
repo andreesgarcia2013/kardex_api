@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\JsonResponse;
 use App\Models\Alumno;
-use App\Models\Usuario;
+use App\Models\User;
 use App\Validators\AlumnoValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +36,7 @@ class AlumnoController extends Controller
             $request->validate($rules);
 
             //Primero registramos el usuario con el se accede al sistema
-            $user= new Usuario();
+            $user= new User();
 
             $user -> nombre   =  $request->nombre;
             $user -> apellido =  $request->apellido;

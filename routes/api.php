@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AlumnoController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\UserController;
@@ -18,10 +19,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('login', [AuthController::class, 'login']);
 
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => ['auth:sanctum']], function(){
+    Route::get('user-profile', [AuthController::class, 'userProfile']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
 Route::prefix('v1/university')-> group(function() {
@@ -54,7 +56,7 @@ Route::prefix('v1/university')-> group(function() {
         Route::get('/kardex/{id_alumno}', 'show');
     }); 
 
-    Route::put('/restore', [UserController::class, 'restorePassword'])->name('restorePassword');
-    Route::get('/kardex-pdf/{id_alumno}', [KardexController::class, 'pdfKardex'])->name('pdf-kardex');
+    Route::put('/restore', [UserController::class, 'restorePassword']);
+    Route::get('/kardex-pdf/{id_alumno}', [KardexController::class, 'pdfKardex']);
 
 });

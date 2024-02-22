@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Responses\JsonResponse;
+use App\Models\User;
 use App\Models\Usuario;
 use App\Validators\UserValidator;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class UserController extends Controller
             $request->validate($rules);
 
             //Ahora podemos guardar al usuario
-            $user= new Usuario();
+            $user= new User();
 
             $user -> nombre   =  $request->nombre;
             $user -> apellido =  $request->apellido;
@@ -76,7 +77,7 @@ class UserController extends Controller
             $rules = UserValidator::restorePasswordRules();
             $request->validate($rules);
 
-            $user=Usuario::where('email',$request->email)->first();
+            $user=User::where('email',$request->email)->first();
             if (!$user) {
                 DB::rollBack();
                 return JsonResponse::notFound('No se encontró el usuario');
@@ -118,7 +119,7 @@ class UserController extends Controller
                 throw new \Exception('No puedes cambiar las credenciales desde aquí');
             }
 
-            $user=Usuario::find($id_user);
+            $user=User::find($id_user);
 
             if (!$user) {
                 DB::rollBack();
@@ -137,7 +138,7 @@ class UserController extends Controller
 
     public function index(){
         try {
-            $admins=Usuario::where('id_rol', 1)->get();
+            $admins=User::where('id_rol', 1)->get();
             return JsonResponse::success('Proceso exitoso', $admins);
         } catch (\Throwable $th) {
             return JsonResponse::error('Error al recuperar los usuario', $th);
@@ -146,7 +147,7 @@ class UserController extends Controller
 
     public function show($id_user){
         try {
-            $admin=Usuario::where('id_rol', 1)->where('id_usuario', $id_user)->first();
+            $admin=User::where('id_rol', 1)->where('id_usuario', $id_user)->first();
             if (!$admin) {
                 return JsonResponse::notFound('No se encontró el usuario');
             }
