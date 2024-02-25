@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\UserController;
@@ -64,6 +65,10 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
                     Route::get('/kardex/{id_alumno}', 'show');
                     Route::get('/kardex-pdf/{id_alumno}', 'pdfKardex');
                 }); 
+
+                Route::prefix('carreras') -> controller(CarreraController::class) -> group(function() {
+                    Route::get('/', 'index');
+                });
             });
 
 
