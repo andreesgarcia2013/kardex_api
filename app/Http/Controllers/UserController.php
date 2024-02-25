@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Responses\JsonResponse;
 use App\Models\User;
-use App\Models\Usuario;
 use App\Validators\UserValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,7 +36,7 @@ class UserController extends Controller
             $user -> nombre   =  $request->nombre;
             $user -> apellido =  $request->apellido;
             $user -> email    =  $request->email;
-            $user -> id_rol   =  $request->id_rol;
+            $user -> id_rol   =  1;
             $user -> password =  Hash::make($request->password);
 
             $user -> save();
@@ -120,6 +119,14 @@ class UserController extends Controller
             }
 
             $user=User::find($id_user);
+
+            if ($user->email!=$request->email) {
+                $existingUser = User::where('email', $request->email)->first();
+                if ($existingUser) {
+                    throw new \Exception('El correo ya esta en uso');
+                }
+            }
+            
 
             if (!$user) {
                 DB::rollBack();

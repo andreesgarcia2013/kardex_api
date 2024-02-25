@@ -48,6 +48,11 @@ class MateriaController extends Controller
             $rules = MateriaValidator::rules();
             $request->validate($rules);
 
+            $materiaExisting=Materia::where('codigo', $request->codigo)->first();
+            if ($materiaExisting) {
+                return response()->json(['message' => 'El código ya esta asociada con una materia'], 409);
+            }
+
             $materia = new Materia();
 
             $materia -> codigo              = $request -> codigo;

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Rol;
-use App\Models\Usuario;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -19,7 +19,7 @@ class UsuariosTableSeeder extends Seeder
         $adminRoleId = Rol::where('rol', 'Administrador')->value('id_rol');
 
         // Crear un usuario con el rol "admin"
-        Usuario::create([
+        User::create([
             'nombre' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => bcrypt('root'),

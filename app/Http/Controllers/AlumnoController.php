@@ -35,6 +35,15 @@ class AlumnoController extends Controller
             $rules = AlumnoValidator::rules();
             $request->validate($rules);
 
+            $existingUser = User::where('email', $request->email)->first();
+            if ($existingUser) {
+                return response()->json(['message' => 'El correo electrónico ya está registrado'], 409);
+            }
+
+            $existingAlumno = Alumno::where('matricula', $request->matricula)->first();
+            if ($existingAlumno) {
+                return response()->json(['message' => 'La matricula ya esta asociada con otro alumno'], 409);
+            }
             //Primero registramos el usuario con el se accede al sistema
             $user= new User();
 
@@ -42,7 +51,7 @@ class AlumnoController extends Controller
             $user -> apellido =  $request->apellido;
             $user -> email    =  $request->email;
             $user -> password =  Hash::make($request->password);
-            $user -> id_rol   =  $request->id_rol;
+            $user -> id_rol   =  2;
 
             $user -> save();
 
@@ -85,6 +94,14 @@ class AlumnoController extends Controller
                 DB::rollBack();
                 return JsonResponse::notFound('No se encontró el usuario');
             }
+
+            if ($alumno->matricula!=$request->matricula) {
+                $existingAlumno = Alumno::where('matricula', $request->matricula)->first();
+                if ($existingAlumno) {
+                    return response()->json(['message' => 'La matricula ya esta asociada con otro alumno'], 409);
+                }
+            }
+
             $alumno->update($request->all());
 
             $userResponse=$this->userController->update($request, $alumno->id_usuario);

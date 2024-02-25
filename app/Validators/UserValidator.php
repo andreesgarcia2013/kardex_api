@@ -10,7 +10,7 @@ class UserValidator
             'nombre'   =>  'required|string|max:255',
             'password' =>  'required|min:8',
             'email'    =>  'required|email|unique:usuarios,email|max:255',
-            'id_rol'   =>  'required|exists:roles,id_rol',
+            'id_rol'   =>  'exists:roles,id_rol',
         ];
     }
 
@@ -18,7 +18,7 @@ class UserValidator
     {
         return [
             'nombre'   =>  'string|max:255',
-            'email'    =>  'email|unique:usuarios,email|max:255',
+            'email'    =>  'email|max:255',
         ];
     }
 
