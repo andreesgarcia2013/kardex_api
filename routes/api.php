@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlumnoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CardController;
 use App\Http\Controllers\CarreraController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\MateriaController;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('login', [AuthController::class, 'login']);
+Route::post('generatecards', [CardController::class, 'store'])->name('generatecards');;
+Route::get('hello', [CardController::class, 'index']);
 
 Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('user-profile', [AuthController::class, 'userProfile']);

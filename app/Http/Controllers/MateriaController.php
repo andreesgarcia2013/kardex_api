@@ -53,7 +53,7 @@ class MateriaController extends Controller
                 return response()->json(['message' => 'El código ya esta asociada con una materia'], 409);
             }
 
-            $materia = new Materia();
+            $materia = new Materia();   
 
             $materia -> codigo              = $request -> codigo;
             $materia -> materia             = $request -> materia;
